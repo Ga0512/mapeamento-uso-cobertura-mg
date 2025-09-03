@@ -8,7 +8,7 @@ from sklearn.metrics import classification_report, accuracy_score
 # --------------------------------------------------------
 # Parâmetros
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-model_path = "tree_torch/rf_torch.pth"
+model_path = "models/tree_torch/rf_torch.pth"
 
 img_RS = r"C:\Users\gabriel.cicotoste\Downloads\Mosaico_s2_Regional_Piloto.tif"
 classification_image = "./result/resultado.tif"
