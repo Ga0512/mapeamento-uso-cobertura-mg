@@ -1,0 +1,40 @@
+2025-08-27 10:15:34,101 - MLProject - INFO - Carregando modelos de segmentação...
+2025-08-27 10:15:34,101 - MLProject - INFO - Carregando Segformer
+2025-08-27 10:15:34,755 - MLProject - INFO - Carregando Deeplab
+2025-08-27 10:15:35,506 - MLProject - INFO - Carregando Unet
+2025-08-27 10:15:36,081 - MLProject - INFO - Todos os modelos de segmentação carregados com sucesso
+2025-08-27 10:15:36,082 - MLProject - INFO - Iniciando inferência Segformer
+2025-08-27 10:15:36,089 - MLProject - DEBUG - Shape da imagem: (128, 128, 3)
+2025-08-27 10:15:36,337 - MLProject - INFO - Inferência Segformer finalizada
+2025-08-27 10:15:36,337 - MLProject - INFO - Iniciando inferência Deeplab
+2025-08-27 10:15:36,337 - MLProject - DEBUG - Shape do tensor: torch.Size([1, 12, 128, 128])
+2025-08-27 10:15:36,396 - MLProject - INFO - Inferência Deeplab finalizada
+2025-08-27 10:15:36,396 - MLProject - INFO - Iniciando inferência Unet
+2025-08-27 10:15:36,400 - MLProject - DEBUG - Shape da imagem: (128, 128, 12)
+2025-08-27 10:15:37,242 - MLProject - INFO - Inferência Unet finalizada
+2025-08-27 10:15:43,894 - MLProject - INFO - Carregando modelo de classificação ViT
+2025-08-27 10:15:49,462 - MLProject - INFO - Modelo de classificação carregado com sucesso
+2025-08-27 10:15:49,462 - MLProject - INFO - Iniciando inferência ViT para data/Amostra_1_fes.tif
+2025-08-27 10:15:49,565 - MLProject - DEBUG - Shape da imagem original: (12, 26, 26)
+2025-08-27 10:15:49,629 - MLProject - INFO - Inferência ViT finalizada, predição: 5
+2025-09-01 11:28:48,412 - MLProject - INFO - Carregando modelo de classificação ViT
+2025-09-01 11:28:55,907 - MLProject - INFO - Modelo de classificação carregado com sucesso
+2025-09-01 11:28:55,907 - MLProject - INFO - Iniciando inferência ViT para dataset/Amostra_1_fes.tif
+2025-09-01 11:28:56,066 - MLProject - DEBUG - Shape da imagem original: (12, 26, 26)
+2025-09-01 11:28:58,020 - MLProject - INFO - Inferência ViT finalizada, predição: 5
+2025-09-01 11:53:12,692 - MLProject - INFO - Carregando modelo de classificação ViT
+2025-09-01 11:53:22,349 - MLProject - INFO - Modelo de classificação carregado com sucesso
+2025-09-01 11:55:35,172 - MLProject - INFO - Carregando modelo de classificação ViT
+2025-09-01 11:55:43,569 - MLProject - INFO - Modelo de classificação carregado com sucesso
+2025-09-01 11:55:43,734 - MLProject - DEBUG - Shape da imagem original: (12, 26, 26)
+2025-09-01 11:58:57,534 - MLProject - INFO - Carregando modelo de classificação ViT
+2025-09-01 11:59:04,614 - MLProject - INFO - Modelo de classificação carregado com sucesso
+2025-09-01 11:59:04,690 - MLProject - DEBUG - Shape da imagem original: (12, 26, 26)
+2025-09-01 12:13:21,048 - MLProject - INFO - Carregando modelo de classificação ViT
+2025-09-01 12:13:28,984 - MLProject - INFO - Modelo de classificação carregado com sucesso
+2025-09-01 12:13:29,111 - MLProject - DEBUG - Shape da imagem original: (12, 26, 26)
+2025-09-01 12:13:31,130 - MLProject - INFO - Inferência ViT finalizada, predição: 5
+2025-09-01 12:14:52,685 - MLProject - INFO - Carregando modelo de classificação ViT
+2025-09-01 12:15:00,665 - MLProject - INFO - Modelo de classificação carregado com sucesso
+2025-09-01 12:15:00,766 - MLProject - DEBUG - Shape da imagem original: (12, 26, 26)
+2025-09-01 12:15:00,825 - MLProject - INFO - Inferência ViT finalizada, predição: 5
