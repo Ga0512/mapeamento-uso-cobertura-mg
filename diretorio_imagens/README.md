@@ -5,6 +5,9 @@ Este repositório organiza os resultados do **Produto P4 – Classificação de 
 A estrutura segue a **regionalização por sub-bacias hidrográficas**, conforme definido no Plano de Trabalho.  
 Cada sub-bacia possui a mesma estrutura de pastas internas, garantindo **padronização, rastreabilidade e reprodutibilidade** dos resultados.
 
+📂 **Acesso ao diretório completo:**  
+[Link para SharePoint](https://ge21cm.sharepoint.com/:f:/s/SAMARCO/El95v9eODuFDnG949-1_yVsBdzoLgiH6uomiwfDPym9VHg?e=cbLddx)
+
 ---
 
 ## Estrutura em Árvore
@@ -128,4 +131,5 @@ Amostras, Classification, Dados_auxiliares, Equalized, Final, além do raster fi
 Exceção: SF1, que possui apenas Dados_auxiliares e Equalized.
 
 Estrutura garante padronização, rastreabilidade e reprodutibilidade dos resultados.
+
 
