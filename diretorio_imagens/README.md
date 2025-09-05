@@ -66,7 +66,8 @@ Planet
 └── texture_ready.json
 ```
 
-Descrição das Pastas e Arquivos
+Descrição das Pastas e Arquivos 
+
 **Amostras/**
 - Contém o conjunto total de pontos amostrais georreferenciados e rotulados, específicos para cada sub-bacia.
 
@@ -127,3 +128,4 @@ Amostras, Classification, Dados_auxiliares, Equalized, Final, além do raster fi
 Exceção: SF1, que possui apenas Dados_auxiliares e Equalized.
 
 Estrutura garante padronização, rastreabilidade e reprodutibilidade dos resultados.
+
