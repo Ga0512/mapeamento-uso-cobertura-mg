@@ -138,8 +138,9 @@ Define parâmetros e metadados relacionados ao processamento de texturas.
 
 Resumo
 Cada sub-bacia (ex.: DO1, GD2, SF2) possui uma estrutura padrão e completa:
-Amostras, Classificacao, Dados_auxiliares, Equalizado, Final, além do raster final .tif.
+Amostras, Classificacao, Dados_auxiliares, Equalizado, Final e Poligonos.
 Estrutura garante padronização, rastreabilidade e reprodutibilidade dos resultados.
+
 
 
 
