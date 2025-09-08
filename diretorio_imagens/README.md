@@ -115,6 +115,13 @@ Descrição das Pastas e Arquivos
 
 - Equalização garante padronização radiométrica para posterior processamento.
 
+**Poligonos/**
+- gpkg contém os polígonos (mapa).
+
+- csv contém dados complementares (atributos).
+
+- .txt guarda informações de processamento.
+
 **Final/**
 - Armazena as imagens equalizadas acrescidas (empilhadas) com os dados auxiliares.
 
@@ -131,11 +138,10 @@ Define parâmetros e metadados relacionados ao processamento de texturas.
 
 Resumo
 Cada sub-bacia (ex.: DO1, GD2, SF2) possui uma estrutura padrão e completa:
-Amostras, Classificacao, Dados_auxiliares, Equalizado, Final, além do raster final .tif.
-
-Exceção: SF1, que possui apenas Dados_auxiliares e Equalized.
-
+Amostras, Classificacao, Dados_auxiliares, Equalizado, Final e Poligonos.
 Estrutura garante padronização, rastreabilidade e reprodutibilidade dos resultados.
+
+
 
 
 
