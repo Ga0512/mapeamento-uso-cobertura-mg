@@ -16,57 +16,67 @@ Cada sub-bacia possui a mesma estrutura de pastas internas, garantindo **padroni
 Planet
 ├── DO1
 │   ├── Amostras
-│   ├── Classification
+│   ├── Classificacao
 │   ├── Dados_auxiliares
-│   ├── Equalized
+│   ├── Equalizado
 │   ├── Final
+│   ├── Poligonos
 │   └── Mosaic_Planet_Regional1_DO1_final.tif
 │
 ├── DO2
 │   ├── Amostras
-│   ├── Classification
+│   ├── Classificacao
 │   ├── Dados_auxiliares
-│   ├── Equalized
+│   ├── Equalizado
 │   ├── Final
+│   ├── Poligonos
 │   └── Mosaic_Planet_Regional1_DO2_final.tif
 │
 ├── GD2
 │   ├── Amostras
-│   ├── Classification
+│   ├── Classificacao
 │   ├── Dados_auxiliares
-│   ├── Equalized
+│   ├── Equalizado
 │   ├── Final
+│   ├── Poligonos
 │   └── Mosaic_Planet_Regional1_GD2_final.tif
 │
 ├── SF1
+│   ├── Amostras
+│   ├── Classificacao
 │   ├── Dados_auxiliares
-│   └── Equalized
+│   ├── Equalizado
+│   ├── Final
+│   ├── Poligonos
+│   └── Mosaic_Planet_Regional1_SF1_final.tif
 │
 ├── SF2
 │   ├── Amostras
-│   ├── Classification
+│   ├── Classificacao
 │   ├── Dados_auxiliares
-│   ├── Equalized
+│   ├── Equalizado
 │   ├── Final
+│   ├── Poligonos
 │   └── Mosaic_Planet_Regional1_SF2_final.tif
 │
 ├── SF3
 │   ├── Amostras
-│   ├── Classification
+│   ├── Classificacao
 │   ├── Dados_auxiliares
-│   ├── Equalized
+│   ├── Equalizado
 │   ├── Final
+│   ├── Poligonos
 │   └── Mosaic_Planet_Regional1_SF3_final.tif
 │
 ├── SF5
 │   ├── Amostras
-│   ├── Classification
+│   ├── Classificacao
 │   ├── Dados_auxiliares
-│   ├── Equalized
+│   ├── Equalizado
 │   ├── Final
+│   ├── Poligonos
 │   └── Mosaic_Planet_Regional1_SF5_final.tif
-│
-└── texture_ready.json
+
 ```
 
 Descrição das Pastas e Arquivos 
@@ -80,7 +90,7 @@ Descrição das Pastas e Arquivos
 
 - Garantem maior precisão na definição das classes de uso e cobertura da terra.
 
-**Classification/**
+**Classificacao/**
 - Armazena os resultados da classificação do uso da terra e cobertura vegetal.
 
 - Versões brutas e filtradas (com limpeza de pixels ruidosos).
@@ -92,8 +102,6 @@ Descrição das Pastas e Arquivos
 **Dados_auxiliares/**
 - Inclui todas as camadas auxiliares utilizadas na classificação final:
 
-- Bandas espectrais Planet: Blue, Green2, Red, NIR.
-
 - Modelos derivados: DEM (elevação), CHM (altura do dossel).
 
 - Classificação preliminar: class_2 (baseada em Sentinel-2B).
@@ -102,7 +110,7 @@ Descrição das Pastas e Arquivos
 
 - Embeddings: representações vetoriais extraídas para auxiliar no aprendizado.
 
-**Equalized/**
+**Equalizado/**
 - Contém as imagens Planet equalizadas que compõem a área da sub-bacia.
 
 - Equalização garante padronização radiométrica para posterior processamento.
@@ -119,17 +127,15 @@ Arquivo raster final da sub-bacia.
 
 - Utilizado diretamente como entrada para os algoritmos de classificação.
 
-**texture_ready.json**
-- Arquivo auxiliar no formato JSON.
-
 Define parâmetros e metadados relacionados ao processamento de texturas.
 
 Resumo
 Cada sub-bacia (ex.: DO1, GD2, SF2) possui uma estrutura padrão e completa:
-Amostras, Classification, Dados_auxiliares, Equalized, Final, além do raster final .tif.
+Amostras, Classificacao, Dados_auxiliares, Equalizado, Final, além do raster final .tif.
 
 Exceção: SF1, que possui apenas Dados_auxiliares e Equalized.
 
 Estrutura garante padronização, rastreabilidade e reprodutibilidade dos resultados.
+
 
 
