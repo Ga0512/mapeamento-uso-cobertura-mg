@@ -38,3 +38,11 @@
 2025-09-01 12:15:00,665 - MLProject - INFO - Modelo de classificação carregado com sucesso
 2025-09-01 12:15:00,766 - MLProject - DEBUG - Shape da imagem original: (12, 26, 26)
 2025-09-01 12:15:00,825 - MLProject - INFO - Inferência ViT finalizada, predição: 5
+2025-10-13 10:11:34,971 - MLProject - INFO - Carregando modelo de classificação ViT
+2025-10-13 10:11:41,056 - MLProject - INFO - Modelo de classificação carregado com sucesso
+2025-10-13 10:11:41,226 - MLProject - DEBUG - Shape da imagem original: (12, 26, 26)
+2025-10-13 10:11:41,299 - MLProject - INFO - Inferência ViT finalizada, predição: 5
+2025-10-13 10:15:35,254 - MLProject - INFO - Carregando modelo de classificação ViT
+2025-10-13 10:15:39,905 - MLProject - INFO - Modelo de classificação carregado com sucesso
+2025-10-13 10:15:39,926 - MLProject - DEBUG - Shape da imagem original: (12, 26, 26)
+2025-10-13 10:15:39,971 - MLProject - INFO - Inferência ViT finalizada, predição: 5
