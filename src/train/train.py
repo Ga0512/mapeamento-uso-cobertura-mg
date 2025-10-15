@@ -45,6 +45,7 @@ class SegmentationModel:
         self.model = None
         self.feature_extractor = None
 
+
     def create_model(self, model_name="nvidia/mit-b1"):
         if self.model_type == "deeplab":
             self.model = models.segmentation.deeplabv3_resnet50(weights=None)
@@ -115,6 +116,7 @@ class SegmentationModel:
         else:
             raise ValueError("Modelo desconhecido. Use 'segformer', 'deeplab' ou 'unet'.")
 
+
     @staticmethod
     def debug_mask_values(dataset, num_samples=3):
         print("\nDebug de valores nas máscaras:")
@@ -125,6 +127,7 @@ class SegmentationModel:
             print(f"  Valores únicos: {unique}")
             print(f"  Contagens: {dict(zip(unique, counts))}")
             print(f"  Shape: {mask.shape}")
+
 
     def train_epoch(self, loader, criterion, optimizer):
         self.model.train()
@@ -140,6 +143,7 @@ class SegmentationModel:
             running_loss += loss.item() * images.size(0)
         return running_loss / len(loader.dataset)
 
+
     def validate_epoch(self, loader, criterion):
         self.model.eval()
         running_loss = 0.0
@@ -152,7 +156,7 @@ class SegmentationModel:
                 running_loss += loss.item() * images.size(0)
         return running_loss / len(loader.dataset)
 
-    
+
     def train(self):
         # ====== Identificação automática da versão ======
         model_base_name = f"{self.model_type}"
@@ -224,13 +228,13 @@ class SegmentationModel:
 
                     if val_loss < best_val_loss:
                         best_val_loss = val_loss
-                        best_model_path = os.path.join(self.output_dir, "best_model.pth")
+                        best_model_path = os.path.join(self.version_dir, "best_model.pth")
                         torch.save(self.model.state_dict(), best_model_path)
                         mlflow.log_artifact(best_model_path)
                         print(f"Melhor modelo salvo! Val_loss: {val_loss:.4f}")
 
                     if (epoch + 1) % 10 == 0:
-                        epoch_model_path = os.path.join(self.output_dir, f"model_epoch_{epoch+1}.pth")
+                        epoch_model_path = os.path.join(self.version_dir, f"model_epoch_{epoch+1}.pth")
                         torch.save(self.model.state_dict(), epoch_model_path)
                         mlflow.log_artifact(epoch_model_path)
 
@@ -244,7 +248,7 @@ class SegmentationModel:
                 plt.xlabel('Época')
                 plt.ylabel('Perda')
                 plt.legend()
-                loss_plot_path = os.path.join(self.output_dir, 'loss_curve.png')
+                loss_plot_path = os.path.join(self.version_dir, 'loss_curve.png')
                 plt.savefig(loss_plot_path)
                 mlflow.log_artifact(loss_plot_path)
 
@@ -292,7 +296,7 @@ class SegmentationModel:
                 )
 
                 checkpoint_cb = ModelCheckpoint(
-                    filepath=os.path.join("./checkpoint", 'model_unet_best.keras'),
+                    filepath=os.path.join(f"./{self.version_dir}/", 'model_unet_best.keras'),
                     monitor='val_accuracy',
                     save_best_only=True,
                     mode='max',
@@ -348,7 +352,7 @@ class SegmentationModel:
                 plt.title('Curva de perda (UNet)')
                 plt.xlabel('Época')
                 plt.ylabel('Loss')
-                loss_plot_path = os.path.join(self.output_dir, 'loss_curve_unet.png')
+                loss_plot_path = os.path.join(self.version_dir, 'loss_curve_unet.png')
                 plt.savefig(loss_plot_path)
                 mlflow.log_artifact(loss_plot_path)
 

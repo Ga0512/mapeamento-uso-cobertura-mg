@@ -1,4 +1,4 @@
-model_type: "segformer"            # ou "segformer" ou "unet"
+model_type: "deeplab"            # ou "segformer" ou "unet"
 image_dir: "dataset/Augmented/Images"
 mask_dir: "dataset/Augmented/Masks"
 
