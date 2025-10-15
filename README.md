@@ -1,3 +1,5 @@
+**documentação desatualizada**
+
 # Análise e Classificação de Imagens de Sensoriamento Remoto
 Este projeto oferece um conjunto de ferramentas para análise e classificação de imagens de sensoriamento remoto, com foco em modelos de segmentação semântica e classificação. Ele foi projetado para ser modular e flexível, permitindo o treinamento e a inferência com diferentes arquiteturas de modelos, como U-Net, DeepLab e SegFormer.
 
