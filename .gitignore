@@ -1,1 +1,8 @@
-models/
+dataset/
+mlruns/
+output/
+src/models/classification/
+src/models/segmentation/
+src/models/tree_torch/
+checkpoint/
+logs/

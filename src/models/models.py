@@ -4,7 +4,7 @@ from torchvision import models
 import torch.nn as nn
 from keras.models import load_model
 import numpy as np
-from src.loader import Data
+from src.data.loader import Data
 from torchvision.transforms.v2 import RandomResizedCrop
 from torchvision.transforms import Normalize
 import timm

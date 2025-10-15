@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from multiclean import clean_array
-from src.models import SegmentationModels, ClassificationModels
+from src.models.models import SegmentationModels, ClassificationModels
 
 
 # === Colormap padrão ===

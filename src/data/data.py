@@ -238,8 +238,13 @@ def get_train_augmentation():
     ])
 
 
-def load_image_mask_pairs(images_dir, labels_dir, num_bands, num_classes, mask_suffix='_mask'):
-    label_files = {os.path.splitext(f)[0]: f for f in os.listdir(labels_dir) if f.lower().endswith(('.tif', '.tiff'))}
+def load_image_mask_pairs(images_dir, labels_dir, num_bands, num_classes):
+    # Garante que comparações não incluam extensão
+    label_files = {
+        os.path.splitext(f)[0]: f
+        for f in os.listdir(labels_dir)
+        if f.lower().endswith(('.tif', '.tiff'))
+    }
 
     X, Y = [], []
 
@@ -247,68 +252,71 @@ def load_image_mask_pairs(images_dir, labels_dir, num_bands, num_classes, mask_s
         if not img_file.lower().endswith(('.tif', '.tiff')):
             continue
 
-        img_name = os.path.splitext(img_file)[0]  # Ex: image_001
-        label_name = img_name + mask_suffix       # Ex: image_001_mask
+        img_name = os.path.splitext(img_file)[0]
 
-        if label_name not in label_files:
+        label_name_no_ext = img_name + "_mask"  # remove extensão para comparar
+
+        if label_name_no_ext not in label_files:
+            print(f"[Aviso] Máscara não encontrada para {img_file}")
             continue
 
-        try:
-            img_path = os.path.join(images_dir, img_file)
-            lbl_path = os.path.join(labels_dir, label_files[label_name])
+        img_path = os.path.join(images_dir, img_file)
+        lbl_path = os.path.join(labels_dir, label_files[label_name_no_ext])
 
-            #Load image
+        try:
+            # --- Carrega imagem ---
             img_ds = gdal.Open(img_path)
             if img_ds is None:
-               
+                print(f"[Aviso] Falha ao abrir imagem: {img_file}")
                 continue
 
             bands = []
-            per_band_min = []
-            per_band_max = []
+            per_band_min, per_band_max = [], []
 
             for b in range(min(num_bands, img_ds.RasterCount)):
                 band = img_ds.GetRasterBand(b + 1)
-
-                #Calculate band stats
                 stats = band.GetStatistics(0, 1)
                 if stats is None:
-                    raise RuntimeError(f'No available stats for band {b+1} of {img_file}')
+                    raise RuntimeError(f'Sem estatísticas para banda {b+1} de {img_file}')
                 min_val, max_val = stats[0], stats[1]
                 per_band_min.append(min_val)
                 per_band_max.append(max_val)
+                bands.append(band.ReadAsArray())
 
-                band_array = band.ReadAsArray()
-                bands.append(band_array)
-
-            #Stack data
             img_array = np.stack(bands, axis=-1).astype(np.float32)
-
-            #Normalize data
-            per_band_min = np.array(per_band_min, dtype=np.float32)
-            per_band_max = np.array(per_band_max, dtype=np.float32)
-            img_array = (img_array - per_band_min[np.newaxis, np.newaxis, :]) / \
-                        (per_band_max - per_band_min + 1e-6)[np.newaxis, np.newaxis, :]
+            per_band_min, per_band_max = np.array(per_band_min), np.array(per_band_max)
+            img_array = (img_array - per_band_min[np.newaxis, np.newaxis, :]) / (
+                per_band_max - per_band_min + 1e-6
+            )[np.newaxis, np.newaxis, :]
             img_array = np.clip(img_array, 0, 1)
 
-            #Load mask
+            # --- Carrega máscara ---
             lbl_ds = gdal.Open(lbl_path)
             if lbl_ds is None:
-        
+                print(f"[Aviso] Falha ao abrir máscara: {lbl_path}")
                 continue
 
             lbl_array = lbl_ds.GetRasterBand(1).ReadAsArray().astype(np.int32)
-            lbl_array = np.clip(lbl_array, 0, num_classes)
+            lbl_array = np.clip(lbl_array, 0, num_classes - 1)
             lbl_onehot = to_categorical(lbl_array, num_classes=num_classes)
 
             X.append(img_array)
             Y.append(lbl_onehot)
 
         except Exception as e:
-           raise (f'Error processing {img_file} & {label_files.get(label_name)}: {e}')
+            print(f"[Erro] {img_file}: {e}")
+            continue
 
     X, Y = np.array(X), np.array(Y)
 
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size=0.75, test_size=0.25)
+    if len(X) == 0:
+        raise ValueError(
+            f"Nenhum par imagem/máscara foi encontrado em '{images_dir}' e '{labels_dir}'. "
+            f"Verifique o sufixo _mask'."
+        )
 
+    X_train, X_test, Y_train, Y_test = train_test_split(
+        X, Y, test_size=0.25, random_state=42
+    )
+    print(f"Total de amostras: {len(X)} | Treino: {len(X_train)} | Teste: {len(X_test)}")
     return X_train, X_test, Y_train, Y_test
