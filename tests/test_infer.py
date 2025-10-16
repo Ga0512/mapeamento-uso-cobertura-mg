@@ -1,3 +1,10 @@
+from utils.sys_env import set_env
+
+set_env()
+
+import warnings
+warnings.filterwarnings("ignore")
+
 import asyncio
 import numpy as np
 import matplotlib.pyplot as plt

@@ -66,8 +66,8 @@ class UnetWrapper:
 
 
 class SegmentationModels:
-    def __init__(self, img_path: str, segformer_path="./models/segmentation/segformer",
-                 deeplab_path="./models/segmentation/deeplab.pth", unet_path='./models/segmentation/unet.keras'):
+    def __init__(self, img_path: str, segformer_path="output/segformer_latest/final_model",
+                 deeplab_path="output/deeplab_latest/best_model.pth", unet_path='output/unet_lates/model_unet_best.keras'):
 
         self.NUM_CLASSES = 16
         self.NUM_CHANNELS = 12

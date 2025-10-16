@@ -1,9 +1,8 @@
+from utils.sys_env import set_env
+
+set_env()
+
 import os
-
-os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # suprime avisos de nível INFO e WARNING
-
-
 import torch
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
