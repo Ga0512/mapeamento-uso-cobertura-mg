@@ -2,8 +2,6 @@ import argparse
 import os
 import yaml
 from src.train.train import segformer, deeplab, unet
-import warnings
-warnings.filterwarnings("ignore")
 
 def load_config(config_path: str):
     """Carrega configurações do arquivo YAML."""
@@ -34,17 +32,15 @@ def main():
 
     # Cria o modelo
     if config["model_type"] == "segformer":
-        model = segformer(**config)
+        model = segformer(use_weights=True, **config)
     elif config["model_type"] == "deeplab":
-        model = deeplab(**config)
+        model = deeplab(use_weights=True, **config)
     elif config["model_type"] == "unet":
-        model = unet(**config)
+        model = unet(use_weights=True, **config)
     else:
         raise ValueError("Modelo inválido em config.yaml: use segformer, deeplab ou unet")
 
     model.train()
-
-        
 
 
 if __name__ == "__main__":
