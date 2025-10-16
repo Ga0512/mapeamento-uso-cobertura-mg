@@ -1,4 +1,9 @@
 import os
+
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # suprime avisos de nível INFO e WARNING
+
+
 import torch
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
@@ -20,7 +25,7 @@ from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.optimizers import Adam
 import warnings
 import mlflow
-
+from utils.symlink_model import create_symlink
 
 warnings.filterwarnings("ignore")
 
@@ -37,13 +42,13 @@ class SegmentationModel:
         self.learning_rate = learning_rate
         self.output_dir = output_dir
         self.img_size = img_size
-        self.num_channels = num_channels
         self.save_steps = save_steps
         self.patience = patience
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.data_augmentation = False
         self.model = None
         self.feature_extractor = None
+        self.num_channels = 12
 
 
     def create_model(self, model_name="nvidia/mit-b1"):
@@ -74,7 +79,7 @@ class SegmentationModel:
             self.model.to(self.device)
 
         elif self.model_type == "unet":
-            inputs = layers.Input(shape=(self.img_size, self.img_size, self.num_channels))
+            inputs = layers.Input(shape=(self.img_size, self.img_size, 12))
 
             # Encoder
             c1 = layers.Conv2D(64, 3, activation='relu', padding='same')(inputs)
@@ -115,6 +120,55 @@ class SegmentationModel:
 
         else:
             raise ValueError("Modelo desconhecido. Use 'segformer', 'deeplab' ou 'unet'.")
+
+
+    def load_latest_weights(self):
+        """
+        Carrega automaticamente o último modelo salvo (via symlink *_latest).
+        - DeepLab → carrega best_model.pth
+        - UNet → carrega model_unet_best.keras
+        - SegFormer → carrega pasta final_model/
+        """
+        latest_dir = os.path.join(self.output_dir, f"{self.model_type}_latest")
+        print(f"🔍 Procurando modelo mais recente em: {latest_dir}")
+
+        # ============ SEGFORMER ============
+        if self.model_type == "segformer":
+            final_model_dir = os.path.join(latest_dir, "final_model")
+            if os.path.exists(final_model_dir):
+                print(f"🔁 Carregando modelo SegFormer de {final_model_dir}")
+                self.feature_extractor = SegformerFeatureExtractor.from_pretrained(final_model_dir)
+                self.model = SegformerForSemanticSegmentation.from_pretrained(final_model_dir)
+                self.model.to(self.device)
+                print("✅ Pesos SegFormer carregados com sucesso!")
+            else:
+                print("⚠️ Nenhum modelo SegFormer anterior encontrado. Criando novo modelo.")
+                self.create_model()
+
+        # ============ DEEPLAB ============
+        elif self.model_type == "deeplab":
+            model_path = os.path.join(latest_dir, "best_model.pth")
+            if os.path.exists(model_path):
+                print(f"🔁 Carregando pesos DeepLab de {model_path}")
+                self.create_model()
+                state_dict = torch.load(model_path, map_location=self.device)
+                self.model.load_state_dict(state_dict, strict=False)
+                print("✅ Pesos DeepLab carregados com sucesso!")
+            else:
+                print("⚠️ Nenhum modelo DeepLab anterior encontrado. Criando novo modelo.")
+                self.create_model()
+
+        # ============ UNET ============
+        elif self.model_type == "unet":
+            model_path = os.path.join(latest_dir, "model_unet_best.keras")
+            if os.path.exists(model_path):
+                print(f"🔁 Carregando pesos UNet de {model_path}")
+                self.create_model()
+                self.model.load_weights(model_path)
+                print("✅ Pesos UNet carregados com sucesso!")
+            else:
+                print("⚠️ Nenhum modelo UNet anterior encontrado. Criando novo modelo.")
+                self.create_model()
 
 
     @staticmethod
@@ -176,6 +230,7 @@ class SegmentationModel:
         if self.model_type == "segformer":
             mode = "seg"
             feature_extractor = self.feature_extractor
+            self.num_channels = 3
         else:
             mode = "dlab"
             feature_extractor = None
@@ -190,7 +245,9 @@ class SegmentationModel:
 
         # 🔹 Início do tracking MLflow
         if mlflow.active_run():
+            print("Encerrando...")
             mlflow.end_run()
+
         with mlflow.start_run(run_name=f"{self.version_name}_training"):
             mlflow.log_params({
                 "version": version,
@@ -292,7 +349,7 @@ class SegmentationModel:
 
             elif self.model_type == "unet":
                 X_train, X_test, Y_train, Y_test = load_image_mask_pairs(
-                    self.image_dir, self.mask_dir, self.num_channels, self.num_classes
+                    self.image_dir, self.mask_dir, 12, self.num_classes
                 )
 
                 checkpoint_cb = ModelCheckpoint(
@@ -356,6 +413,9 @@ class SegmentationModel:
                 plt.savefig(loss_plot_path)
                 mlflow.log_artifact(loss_plot_path)
 
+            out = f"{self.output_dir}/{self.model_type}_latest"
+            create_symlink(self.version_dir, out)
+
             # 🔹 Finaliza o run MLflow
             print(f"\n✅ Treinamento concluído: {self.version_name}")
             print(f"📁 Resultados salvos em: {self.version_dir}")
@@ -372,26 +432,35 @@ class SegmentationModel:
             except Exception as e:
                 print(f"⚠️ Erro ao registrar modelo no MLflow: {e}")
            
+            print("Encerrando...")
             mlflow.end_run()
 
 
-def segformer(**kwargs):
+def segformer(use_weights=False, **kwargs):
     kwargs['model_type'] = 'segformer'
     model = SegmentationModel(**kwargs)
-    model.create_model(model_name="nvidia/mit-b1")
+    if use_weights:
+        model.load_latest_weights()
+    else:
+        model.create_model(model_name="nvidia/mit-b1")
     return model
 
 
-def deeplab(**kwargs):
+def deeplab(use_weights=False, **kwargs):
     kwargs['model_type'] = 'deeplab'
     model = SegmentationModel(**kwargs)
-    model.create_model()
+    if use_weights:
+        model.load_latest_weights()
+    else:
+        model.create_model()
     return model
 
 
-def unet(**kwargs):
+def unet(use_weights=False, **kwargs):
     kwargs['model_type'] = 'unet'
     model = SegmentationModel(**kwargs)
-    model.create_model()
+    if use_weights:
+        model.load_latest_weights()
+    else:
+        model.create_model()
     return model
-
