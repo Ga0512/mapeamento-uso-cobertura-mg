@@ -1,0 +1,25 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from src.api import router
+
+app = FastAPI(
+    title="IEF",
+    version="1.0.0",
+    description="API para segmentacao de imagens de satélites"
+)
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],  
+    allow_headers=["*"],  
+)
+
+app.include_router(router)
+
+
+@app.get("/healthy", tags=["Health"])
+async def healthy():
+    return {"status": "ok"}
