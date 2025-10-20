@@ -7,7 +7,7 @@ from .base import BaseWrapper
 class SegformerWrapper(BaseWrapper):
     def __init__(self, model_path, device):
         model = SegformerForSemanticSegmentation.from_pretrained(model_path).to(device).eval()
-        processor = SegformerImageProcessor.from_pretrained(model_path)
+        processor = SegformerImageProcessor.from_pretrained(model_path, do_rescale=False)
         super().__init__(model, device)
         self.processor = processor
 
