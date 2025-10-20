@@ -1,10 +1,19 @@
 from office365.sharepoint.client_context import ClientContext
 from office365.runtime.auth.client_credential import ClientCredential
 import os
+from dotenv import load_dotenv
+from pathlib import Path
+
+
+ROOT_DIR = Path(__file__).resolve().parents[1]  
+
+ENV_PATH = ROOT_DIR / ".env"
+
+load_dotenv(dotenv_path=ENV_PATH)
 
 site_url = "https://ge21cm.sharepoint.com/sites/SAMARCO"
-client_id = "5b37cb3a-7e6e-498d-989c-f5e2b0353bb5"
-client_secret = "1d9b89ab-85af-4c9e-9701-7f92b4b790c4"
+client_id = os.getenv("AZURE_CLIENT_ID")
+client_secret = os.getenv("AZURE_CLIENT_SECRET")
 
 ctx = ClientContext(site_url).with_credentials(ClientCredential(client_id, client_secret))
 

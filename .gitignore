@@ -6,3 +6,4 @@ src/models/segmentation/
 src/models/tree_torch/
 checkpoint/
 logs/
+.env
