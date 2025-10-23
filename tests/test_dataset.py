@@ -8,7 +8,7 @@ warnings.filterwarnings("ignore")
 import pytest
 import numpy as np
 import os
-from src.data.data import RemoteSensingDataset
+from src.data.dataset import RemoteSensingDataset
 from transformers import SegformerFeatureExtractor  # ou outro que você usa
 
 # Caminhos mínimos
