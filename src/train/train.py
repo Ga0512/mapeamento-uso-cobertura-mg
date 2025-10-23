@@ -3,6 +3,7 @@ from utils.sys_env import set_env
 set_env()
 
 import os
+from src.train.evaluate import eval
 import torch
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
@@ -296,6 +297,8 @@ class SegmentationModel:
 
                 mlflow.log_metric("best_val_loss", best_val_loss)
                 mlflow.log_metric("training_time_min", (time.time() - start_time) / 60)
+                
+                
 
             elif self.model_type == "segformer":
                 training_args = TrainingArguments(

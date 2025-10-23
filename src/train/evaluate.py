@@ -47,7 +47,7 @@ def eval(
     pixel_accs, dice_macros = [], []
 
     # -------- Loop principal --------
-    for img_path in image_paths:
+    for img_path in image_paths[:100]:
         name = os.path.basename(img_path).replace(".tif", "")
         mask_path = os.path.join(masks_dir, f"{name}_mask.tif")
         if not os.path.exists(mask_path):
@@ -83,45 +83,38 @@ def eval(
         raise RuntimeError("Nenhuma predição válida.")
 
     # -------- Métricas específicas --------
-    segformer_res = None
-    unet_miou = None
-    deeplab_miou = None
+    mean_iou = None
 
     if model_type == "segformer":
         logits_oh = one_hot(np.stack(preds), num_classes)
-        segformer_res = eval_mean_iou((logits_oh, np.stack(gts)), num_classes)
+        mean_iou = eval_mean_iou((logits_oh, np.stack(gts)), num_classes)
 
     if model_type == "unet":
         y_true = np.transpose(one_hot(np.stack(gts), num_classes), (0, 2, 3, 1))
         y_pred = np.transpose(one_hot(np.stack(preds), num_classes), (0, 2, 3, 1))
         metric_fn = mean_iou_metric_keras(num_classes)
-        unet_miou = float(metric_fn(tf.convert_to_tensor(y_true), tf.convert_to_tensor(y_pred)).numpy())
+        mean_iou = float(metric_fn(tf.convert_to_tensor(y_true), tf.convert_to_tensor(y_pred)).numpy())
 
     if model_type == "deeplab":
         logits_oh = one_hot(np.stack(preds), num_classes)
-        deeplab_miou = eval_mean_iou((logits_oh, np.stack(gts)), num_classes)
+        mean_iou = eval_mean_iou((logits_oh, np.stack(gts)), num_classes)
 
 
     # -------- Consolidação --------
     results = {
         "dataset_size": len(preds),
-        "universal": {
-            "pixel_acc_mean": float(np.mean(pixel_accs)),
-            "dice_macro_mean": float(np.mean(dice_macros)),
-        },
-        "segformer": segformer_res,
-        "unet_mean_iou": unet_miou,
-        "deeplab_mean_iou": deeplab_miou,
+        "pixel_acc_mean": float(np.mean(pixel_accs)),
+        "dice_macro_mean": float(np.mean(dice_macros)),
+        "mean_iou": mean_iou,
     }
 
     # -------- Log leve --------
     print(f"\n=== Avaliação {model_type.upper()} ===")
     print(f"Imagens avaliadas: {results['dataset_size']}")
-    print(f"Pixel Acc: {results['universal']['pixel_acc_mean']:.4f}")
-    print(f"Dice Macro: {results['universal']['dice_macro_mean']:.4f}")
-    if unet_miou: print(f"(UNet) Mean IoU Keras: {unet_miou:.4f}")
-    if segformer_res: print(f"(SegFormer) Mean IoU: {segformer_res}")
-    if deeplab_miou: print(f"(DeepLab) Mean IoU: {deeplab_miou}")
+    print(f"Pixel Acc: {results['pixel_acc_mean']:.4f}")
+    print(f"Dice Macro: {results['dice_macro_mean']:.4f}")
+    print(f"Mean IOU: {results['mean_iou']:.4f}")
+    
 
     return results
 

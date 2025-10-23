@@ -1,13 +1,13 @@
 import tensorflow as tf
 import numpy as np
-from keras.models import load_model
 from src.data.loader import Data
 from .base import BaseWrapper
 import gc
+print(tf.__version__)
 
 class UnetWrapper(BaseWrapper):
     def __init__(self, model_path):
-        model = load_model(model_path, compile=False, safe_mode=False)
+        model = tf.keras.models.load_model(model_path, compile=False)
         super().__init__(model)
 
     def predict(self, img_path: str):

@@ -2,7 +2,6 @@ import argparse
 import os
 import yaml
 from src.train.train import segformer, deeplab, unet
-from src.train.evaluate import eval
 
 def load_config(config_path: str):
     """Carrega configurações do arquivo YAML."""
@@ -42,7 +41,6 @@ def main():
         raise ValueError("Modelo inválido em config.yaml: use segformer, deeplab ou unet")
 
     model.train()
-    eval(config["model_type"])
 
 
 if __name__ == "__main__":
