@@ -5,14 +5,6 @@ echo "=== 🧩 Configurando ambiente do CI/CD ==="
 
 # Atualiza pacotes e instala dependências básicas
 sudo apt-get update -y && sudo apt-get upgrade -y
-sudo apt-get install -y \
-    software-properties-common \
-    git curl wget unzip build-essential \
-    libgl1-mesa-glx \
-    libglib2.0-0 \
-    libsm6 \
-    libxext6 \
-    libxrender-dev
 
 echo "=== 🌍 Instalando GDAL ==="
 # Instala o GDAL e bindings Python
