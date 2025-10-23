@@ -3,6 +3,7 @@ from utils.sys_env import set_env
 set_env()
 
 import os
+from src.train.evaluate import eval
 import torch
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
@@ -11,9 +12,8 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from tqdm import tqdm
 from torchvision import models
 from transformers import SegformerForSemanticSegmentation, SegformerFeatureExtractor, Trainer, TrainingArguments
-from utils.metrics import compute_metrics, categorical_focal_loss, mean_iou_metric_keras, compute_mean_iou
-from src.data.data import RemoteSensingDataset, prepare_data, AugmentationGenerator, get_train_augmentation, load_image_mask_pairs
-import numpy as np
+from utils.metrics import eval_mean_iou, categorical_focal_loss, mean_iou_metric_keras
+from src.data.dataset import RemoteSensingDataset, load_pairs_torch, AugmentationGenerator, get_train_augmentation, load_pairs_tensorflow
 import time
 from keras import layers
 import keras
@@ -170,18 +170,6 @@ class SegmentationModel:
                 self.create_model()
 
 
-    @staticmethod
-    def debug_mask_values(dataset, num_samples=3):
-        print("\nDebug de valores nas máscaras:")
-        for i in range(min(num_samples, len(dataset))):
-            _, mask = dataset[i]
-            unique, counts = np.unique(mask, return_counts=True)
-            print(f"Amostra {i+1}:")
-            print(f"  Valores únicos: {unique}")
-            print(f"  Contagens: {dict(zip(unique, counts))}")
-            print(f"  Shape: {mask.shape}")
-
-
     def train_epoch(self, loader, criterion, optimizer):
         self.model.train()
         running_loss = 0.0
@@ -224,7 +212,7 @@ class SegmentationModel:
         print(f"🚀 Iniciando treinamento {self.version_name}")
         registered_model_name = f"{self.model_type.capitalize()}Model"
 
-        train_img, train_mask, val_img, val_mask = prepare_data(self.image_dir, self.mask_dir)
+        train_img, train_mask, val_img, val_mask = load_pairs_torch(self.image_dir, self.mask_dir)
 
         if self.model_type == "segformer":
             mode = "seg"
@@ -237,11 +225,7 @@ class SegmentationModel:
         train_dataset = RemoteSensingDataset(train_img, train_mask, feature_extractor, self.num_classes, mode)
         val_dataset = RemoteSensingDataset(val_img, val_mask, feature_extractor, self.num_classes, mode)
 
-        train_loader = DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True,
-                                num_workers=4, pin_memory=True, drop_last=True)
-        val_loader = DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False,
-                                num_workers=4, drop_last=False)
-
+       
         # 🔹 Início do tracking MLflow
         if mlflow.active_run():
             print("Encerrando...")
@@ -261,6 +245,11 @@ class SegmentationModel:
             })
 
             if self.model_type == "deeplab":
+                train_loader = DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True,
+                                num_workers=4, pin_memory=True, drop_last=True)
+                val_loader = DataLoader(val_dataset, batch_size=self.batch_size, shuffle=False,
+                                        num_workers=4, drop_last=False)
+                
                 criterion = nn.CrossEntropyLoss(ignore_index=-1)
                 optimizer = torch.optim.Adam(self.model.parameters(), lr=self.learning_rate, weight_decay=1e-4)
                 scheduler = ReduceLROnPlateau(optimizer, 'min', patience=5, factor=0.5)
@@ -274,12 +263,10 @@ class SegmentationModel:
                     train_loss = self.train_epoch(train_loader, criterion, optimizer)
                     val_loss = self.validate_epoch(val_loader, criterion)
                     scheduler.step(val_loss)
-                    mean_iou = compute_mean_iou(self.model, val_loader, self.device)
-
+                
                     # 🔹 Métricas MLflow
                     mlflow.log_metric("train_loss", train_loss, step=epoch)
                     mlflow.log_metric("val_loss", val_loss, step=epoch)
-                    mlflow.log_metric("mean_iou", mean_iou, step=epoch)
                     mlflow.log_metric("lr", optimizer.param_groups[0]['lr'], step=epoch)
 
                     if val_loss < best_val_loss:
@@ -310,6 +297,8 @@ class SegmentationModel:
 
                 mlflow.log_metric("best_val_loss", best_val_loss)
                 mlflow.log_metric("training_time_min", (time.time() - start_time) / 60)
+                
+                
 
             elif self.model_type == "segformer":
                 training_args = TrainingArguments(
@@ -334,7 +323,7 @@ class SegmentationModel:
                     args=training_args,
                     train_dataset=train_dataset,
                     eval_dataset=val_dataset,
-                    compute_metrics=compute_metrics,
+                    compute_metrics=eval_mean_iou,
                 )
 
                 print("Iniciando treinamento SegFormer...")
@@ -347,7 +336,7 @@ class SegmentationModel:
                 mlflow.log_artifact(final_model_path)
 
             elif self.model_type == "unet":
-                X_train, X_test, Y_train, Y_test = load_image_mask_pairs(
+                X_train, X_test, Y_train, Y_test = load_pairs_tensorflow(
                     self.image_dir, self.mask_dir, 12, self.num_classes
                 )
 

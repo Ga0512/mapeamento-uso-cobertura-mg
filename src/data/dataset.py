@@ -189,8 +189,21 @@ class AugmentationGenerator(tf.keras.utils.Sequence):
         if self.shuffle:
             np.random.shuffle(self.indexes)
 
+def get_train_augmentation():
+    return A.Compose([
+        A.HorizontalFlip(p=0.5),
+        A.VerticalFlip(p=0.5),
+        A.RandomRotate90(p=0.5),
+        A.Affine(scale=(0.95, 1.05), translate_percent=(0.05, 0.05), rotate=(-10, 10), shear=0, p=0.5),
+        A.RandomBrightnessContrast(p=0.3),
+        A.GaussNoise(p=0.2),
+        A.ElasticTransform(alpha=1, sigma=50, p=0.3),
+        A.GridDistortion(p=0.3),
+        A.CoarseDropout(num_holes_range=(8, 8), hole_height_range=(8, 8), hole_width_range=(8, 8), fill=0.0, p=0.3),
+    ])
 
-def prepare_data(img_dir, mask_dir):
+
+def load_pairs_torch(img_dir, mask_dir):
     print("Preparando dados...")
     image_files = sorted(glob.glob(os.path.join(img_dir, "*.tif")))
     mask_files = []
@@ -224,21 +237,8 @@ def prepare_data(img_dir, mask_dir):
     return train_img, train_mask, val_img, val_mask
 
 
-def get_train_augmentation():
-    return A.Compose([
-        A.HorizontalFlip(p=0.5),
-        A.VerticalFlip(p=0.5),
-        A.RandomRotate90(p=0.5),
-        A.Affine(scale=(0.95, 1.05), translate_percent=(0.05, 0.05), rotate=(-10, 10), shear=0, p=0.5),
-        A.RandomBrightnessContrast(p=0.3),
-        A.GaussNoise(p=0.2),
-        A.ElasticTransform(alpha=1, sigma=50, p=0.3),
-        A.GridDistortion(p=0.3),
-        A.CoarseDropout(num_holes_range=(8, 8), hole_height_range=(8, 8), hole_width_range=(8, 8), fill=0.0, p=0.3),
-    ])
-
-
-def load_image_mask_pairs(images_dir, labels_dir, num_bands, num_classes):
+# Unet 12 bands
+def load_pairs_tensorflow(images_dir, labels_dir, num_bands, num_classes):
     # Garante que comparações não incluam extensão
     label_files = {
         os.path.splitext(f)[0]: f

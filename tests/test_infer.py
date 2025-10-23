@@ -1,5 +1,3 @@
-# tests/test_segmentation_models.py
-
 import os
 import numpy as np
 import pytest
@@ -26,4 +24,4 @@ def test_model_prediction_shape(model_name):
     # Verifica se não está vazia
     assert mask.size > 0, f"Máscara do modelo {model_name} está vazia"
 
-    print(f"✅ {model_name} → máscara: {mask.shape}")
+    print(f"✅ {model_name} → máscara: {mask.shape} - {type(mask)}")
