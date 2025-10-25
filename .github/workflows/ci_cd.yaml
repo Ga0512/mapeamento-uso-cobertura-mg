@@ -2,7 +2,7 @@ name: CI/CD - Teste + Build Docker
 
 on:
   push:
-    branches: [ master ]   # ou a branch que você usa
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -11,20 +11,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Pega o código do repositório
       - name: Checkout do repositório
         uses: actions/checkout@v4
 
-      # 2. Instala Python e dependências pra testes
-      - name: Configurar Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
-      - name: Instalar dependências
-        run: bash setup.sh
-
-      # 3. Roda os testes
-      - name: Executar testes
-        run: pytest -p no:faulthandler
-
+      - name: Instalar dependências e rodar tudo
+        env:
+          CI: "true"
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install pytest
+          bash setup.sh

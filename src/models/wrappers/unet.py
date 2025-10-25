@@ -4,6 +4,7 @@ from src.data.loader import Data
 from .base import BaseWrapper
 import gc
 print(tf.__version__)
+import os 
 
 class UnetWrapper(BaseWrapper):
     def __init__(self, model_path):
