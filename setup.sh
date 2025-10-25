@@ -1,6 +1,3 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
 echo "=== Conteúdo visível no container ==="
 ls -R | head -n 50
 
