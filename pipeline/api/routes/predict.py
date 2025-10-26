@@ -6,8 +6,20 @@ import shutil
 from src.models import SegmentationModels
 from pipeline.api.core.logger import logger
 
+import os
+from fastapi import FastAPI
 
-model = SegmentationModels(segformer_path=None, deeplab_path=None, unet_path=None)
+CI_MODE = os.getenv("CI", "false").lower() == "true"
+
+app = FastAPI()
+
+if CI_MODE:
+    from tests.mocks import MockModel
+    model = MockModel()
+else:
+    from src.models import SegmentationModels
+    model = SegmentationModels()
+
 router = APIRouter()
 
 @router.post("/predict", tags=["Predict"])

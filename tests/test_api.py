@@ -1,6 +1,9 @@
 import io
 from fastapi.testclient import TestClient
 from pipeline.api.main import app
+import os
+
+os.environ["CI"] = "true"
 
 client = TestClient(app)
 
