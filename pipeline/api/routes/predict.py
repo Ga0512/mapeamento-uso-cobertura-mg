@@ -7,7 +7,7 @@ from src.models import SegmentationModels
 from pipeline.api.core.logger import logger
 
 
-model = SegmentationModels()
+model = SegmentationModels(segformer_path=None, deeplab_path=None, unet_path=None)
 router = APIRouter()
 
 @router.post("/predict", tags=["Predict"])
