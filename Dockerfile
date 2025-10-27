@@ -8,7 +8,7 @@ WORKDIR /app
 # Instala Python3.10 (já provavelmente incluído ou pode instalar via apt),
 # mas se quiser exatamente 3.10 talvez precise de algum ppa ou escolher outra base
 RUN apt-get update && \
-    apt-get install -y python3.10 python3.10-venv python3.10-dev python3-pip && \
+    apt-get install -y python3.10 python3.10-venv python3.10-dev python3-pip gdal-bin && \
     rm -rf /var/lib/apt/lists/*
 
 # Atualiza pip
