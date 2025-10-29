@@ -5,9 +5,9 @@ import uuid
 import shutil
 from src.models import SegmentationModels
 from pipeline.api.core.logger import logger
-
-import os
 from fastapi import FastAPI
+
+os.makedirs("temp", exist_ok=True)
 
 CI_MODE = os.getenv("CI", "false").lower() == "true"
 

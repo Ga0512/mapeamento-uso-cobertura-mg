@@ -1,6 +1,9 @@
 name: CI/CD - Teste + Build Docker
 on: [push, workflow_dispatch]
 
+env:
+  ENV: "CI"
+
 jobs:
   build:
     runs-on: ubuntu-latest
