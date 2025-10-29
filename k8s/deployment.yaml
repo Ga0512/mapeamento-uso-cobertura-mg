@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ief-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ief
+  template:
+    metadata:
+      labels:
+        app: ief
+    spec:
+      containers:
+      - name: ief
+        image: gabriel0murilo/ief:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - name: output-volume
+          mountPath: /app/output
+        resources:
+          limits:
+            nvidia.com/gpu: 1  # Usa 1 GPU
+      volumes:
+      - name: output-volume
+        hostPath:
+          path: /output  # pasta local (no node)
+          type: Directory

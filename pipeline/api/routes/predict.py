@@ -10,7 +10,6 @@ import os
 from fastapi import FastAPI
 
 CI_MODE = os.getenv("CI", "false").lower() == "true"
-os.makedirs("temp", exist_ok=True)
 
 app = FastAPI()
 

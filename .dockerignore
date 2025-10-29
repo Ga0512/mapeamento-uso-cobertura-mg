@@ -26,3 +26,4 @@ diretorio_imagens/
 build/
 dist/
 .cache/
+k8s/
