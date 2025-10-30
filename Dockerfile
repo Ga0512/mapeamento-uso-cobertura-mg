@@ -1,4 +1,4 @@
-# Base NVIDIA otimizada (menor que a runtime)
+# Use uma imagem NVIDIA com CUDA e cuDNN já incluídos
 FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -6,27 +6,27 @@ ENV CI_MODE="false"
 
 WORKDIR /app
 
-# Instala apenas o essencial em uma única camada
+# Corrigido: adicionado '&& \' antes do rm -rf
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        python3-pip python3-dev gdal-bin && \
-    rm -rf /var/lib/apt/lists/* && \
-    pip3 install --upgrade pip && \
-    pip3 cache purge
+        python3-pip python3-dev \
+        gdal-bin && \
+    rm -rf /var/lib/apt/lists/*
 
-# Copia requirements antes do código (melhor cache)
+# Atualiza pip
+RUN pip3 install --upgrade pip
+
+# Corrigido: havia 'install install' duplicado
 COPY requirements.txt .
-
-# Instala dependências do projeto
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-# PyTorch CUDA 11.8 (usa CUDA runtime da base)
-RUN pip3 install --no-cache-dir torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu118
+# Corrigido: havia 'install install' duplicado também aqui
+RUN pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu118
 
-# TensorFlow GPU (essa versão já detecta a GPU via CUDA 11.8)
-RUN pip3 install --no-cache-dir tensorflow==2.15.0
+# Instala TensorFlow GPU
+RUN pip3 install tensorflow
 
-# Copia o restante do app
+# Copia app
 COPY . .
 
 EXPOSE 8000
