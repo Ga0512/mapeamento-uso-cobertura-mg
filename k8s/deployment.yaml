@@ -12,6 +12,8 @@ spec:
       labels:
         app: ief
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: minikube
       containers:
       - name: ief
         image: gabriel0murilo/ief:latest
