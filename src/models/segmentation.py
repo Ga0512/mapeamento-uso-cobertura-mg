@@ -16,9 +16,9 @@ class SegmentationModels:
         mask = model.deeplab.predict(img_path)
     """
     def __init__(self,
-                 segformer_path="output/segformer_latest/final_model",
-                 deeplab_path="output/deeplab_latest/best_model.pth",
-                 unet_path="output/unet_latest/model_unet_best.keras",
+                 segformer_path="./output/segformer_latest/final_model",
+                 deeplab_path="./output/deeplab_latest/best_model.pth",
+                 unet_path="./output/unet_latest/model_unet_best.keras",
                  num_classes=16, num_channels=12):
 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

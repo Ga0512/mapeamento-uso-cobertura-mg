@@ -298,8 +298,14 @@ class SegmentationModel:
                 mlflow.log_metric("best_val_loss", best_val_loss)
                 mlflow.log_metric("training_time_min", (time.time() - start_time) / 60)
                 
-                
+                # evaluate
+                evaluate = eval(self.model_type)
+                mlflow.log_metric("Images validates", evaluate["dataset_size"])
+                mlflow.log_metric("Pixel acc", evaluate["pixel_acc_mean"])
+                mlflow.log_metric("Dice Macro", evaluate["dice_macro_mean"])
+                mlflow.log_metric("Mean IOU", evaluate["mean_iou"])
 
+        
             elif self.model_type == "segformer":
                 training_args = TrainingArguments(
                     output_dir=self.version_dir,
@@ -334,6 +340,13 @@ class SegmentationModel:
                 trainer.save_model(final_model_path)
                 self.feature_extractor.save_pretrained(final_model_path)
                 mlflow.log_artifact(final_model_path)
+
+                # evaluate
+                evaluate = eval(self.model_type)
+                mlflow.log_metric("Images validates", evaluate["dataset_size"])
+                mlflow.log_metric("Pixel acc", evaluate["pixel_acc_mean"])
+                mlflow.log_metric("Dice Macro", evaluate["dice_macro_mean"])
+                mlflow.log_metric("Mean IOU", evaluate["mean_iou"])
 
             elif self.model_type == "unet":
                 X_train, X_test, Y_train, Y_test = load_pairs_tensorflow(
@@ -400,6 +413,13 @@ class SegmentationModel:
                 loss_plot_path = os.path.join(self.version_dir, 'loss_curve_unet.png')
                 plt.savefig(loss_plot_path)
                 mlflow.log_artifact(loss_plot_path)
+
+                # evaluate
+                evaluate = eval(self.model_type)
+                mlflow.log_metric("Images validates", evaluate["dataset_size"])
+                mlflow.log_metric("Pixel acc", evaluate["pixel_acc_mean"])
+                mlflow.log_metric("Dice Macro", evaluate["dice_macro_mean"])
+                mlflow.log_metric("Mean IOU", evaluate["mean_iou"])
 
             out = f"{self.output_dir}/{self.model_type}_latest"
             create_symlink(self.version_dir, out)

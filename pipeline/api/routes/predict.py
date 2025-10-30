@@ -5,9 +5,21 @@ import uuid
 import shutil
 from src.models import SegmentationModels
 from pipeline.api.core.logger import logger
+from fastapi import FastAPI
 
+os.makedirs("temp", exist_ok=True)
 
-model = SegmentationModels()
+CI_MODE = os.getenv("CI", "false").lower() == "true"
+
+app = FastAPI()
+
+if CI_MODE:
+    from tests.mocks import MockModel
+    model = MockModel()
+else:
+    from src.models import SegmentationModels
+    model = SegmentationModels()
+
 router = APIRouter()
 
 @router.post("/predict", tags=["Predict"])

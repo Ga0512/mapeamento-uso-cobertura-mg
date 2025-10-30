@@ -1,8 +1,9 @@
 import torch
-import torch.nn as nn
+
 from transformers import SegformerForSemanticSegmentation, SegformerFeatureExtractor
 from src.data.loader import Data
 from .base import BaseWrapper
+import os
 
 class SegformerWrapper(BaseWrapper):
     def __init__(self, model_path, device):

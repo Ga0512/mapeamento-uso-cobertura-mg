@@ -1,0 +1,29 @@
+# Ambientes e dependências
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Dados e modelos grandes
+dataset/
+output/
+
+mlruns/
+
+Airflow/
+config/
+diretorio_imagens/
+
+# Git e configs locais
+.git/
+.gitignore
+.env
+.DS_Store
+
+# Cache do pip e build
+*.egg-info
+build/
+dist/
+.cache/
+k8s/
