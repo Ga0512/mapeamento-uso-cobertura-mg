@@ -18,6 +18,8 @@ kubectl get nodes -o=custom-columns=NAME:.metadata.name,GPU:.status.allocatable.
 kubectl describe pod <nome_do_pod>
 kubectl logs <nome_do_pod>
 kubectl get pods -o wide
+kubectl get pods -w
+kubectl describe deployment ief-deployment
 
 
 kubectl delete pods --all
