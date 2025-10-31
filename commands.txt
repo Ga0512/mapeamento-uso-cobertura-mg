@@ -1,4 +1,4 @@
-docker run --gpus all -it --rm -v ${PWD}/output:/app/output -p 8000:8000 ief:latest
+docker run --gpus all -it --rm -v ${PWD}/output:/app/output -p 8000:8000 gabriel0murilo/ief:latest
 
 minikube start --driver=docker --addons=registry --mount --mount-string="$PWD:/app"
 
