@@ -31,6 +31,9 @@ jobs:
           DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
         run: echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
+      - name: Limpar Docker antigo
+        run: docker system prune -f
+        
       - name: Build da imagem
         run: docker build -t ${{ secrets.DOCKER_USER }}/ief:latest .
 

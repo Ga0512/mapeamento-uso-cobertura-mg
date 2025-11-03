@@ -14,17 +14,14 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Atualiza pip
-RUN pip3 install --upgrade pip
+RUN pip3 install --no-cache-dir --upgrade pip
 
 # Corrigido: havia 'install install' duplicado
 COPY requirements.txt .
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Corrigido: havia 'install install' duplicado também aqui
-RUN pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu118
-
-# Instala TensorFlow GPU
-RUN pip3 install tensorflow
+RUN pip3 install --no-cache-dir torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu118
 
 # Copia app
 COPY . .
