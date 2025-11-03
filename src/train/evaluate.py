@@ -43,7 +43,7 @@ def eval(
     pixel_accs, dice_macros = [], []
 
     # -------- Loop principal --------
-    for img_path in image_paths[:100]:
+    for img_path in image_paths[:1000]:
         name = os.path.basename(img_path).replace(".tif", "")
         mask_path = os.path.join(masks_dir, f"{name}_mask.tif")
         if not os.path.exists(mask_path):
@@ -112,4 +112,4 @@ def eval(
     return results
 
 if __name__ == "__main__":
-    eval("segformer", num_classes=16)
+    eval("unet", num_classes=16)

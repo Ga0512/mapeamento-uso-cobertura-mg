@@ -272,7 +272,7 @@ class SegmentationModel:
                 mlflow.log_metric("Images validates", evaluate["dataset_size"])
                 mlflow.log_metric("Pixel acc", evaluate["pixel_acc_mean"])
                 mlflow.log_metric("Dice Macro", evaluate["dice_macro_mean"])
-                mlflow.log_metric("Mean IOU", evaluate["mean_iou"])
+                mlflow.log_metric("Mean IOU", evaluate["mean_iou"]['mean_iou'])
 
         
             elif self.model_type == "segformer":
@@ -315,7 +315,7 @@ class SegmentationModel:
                 mlflow.log_metric("Images validates", evaluate["dataset_size"])
                 mlflow.log_metric("Pixel acc", evaluate["pixel_acc_mean"])
                 mlflow.log_metric("Dice Macro", evaluate["dice_macro_mean"])
-                mlflow.log_metric("Mean IOU", evaluate["mean_iou"])
+                mlflow.log_metric("Mean IOU", evaluate["mean_iou"]['mean_iou'])
 
 
             elif self.model_type == "unet":
@@ -380,7 +380,7 @@ class SegmentationModel:
                 mlflow.log_metric("Images validates", evaluate["dataset_size"])
                 mlflow.log_metric("Pixel acc", evaluate["pixel_acc_mean"])
                 mlflow.log_metric("Dice Macro", evaluate["dice_macro_mean"])
-                mlflow.log_metric("Mean IOU", evaluate["mean_iou"])
+                mlflow.log_metric("Mean IOU", evaluate["mean_iou"]['mean_iou'])
                 
             
             out = f"{self.output_dir}/{self.model_type}_latest"

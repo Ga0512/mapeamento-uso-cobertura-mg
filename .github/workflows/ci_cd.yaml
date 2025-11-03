@@ -32,10 +32,10 @@ jobs:
         run: echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
       - name: Limpar Docker antigo
-        run: docker system prune -f
+        run: docker system prune -af
         
       - name: Build da imagem
-        run: docker build -t ${{ secrets.DOCKER_USER }}/ief:latest .
+        run: docker build --no-cache -t ${{ secrets.DOCKER_USER }}/ief:latest .
 
       - name: Push para Docker Hub
         run: docker push ${{ secrets.DOCKER_USER }}/ief:latest
