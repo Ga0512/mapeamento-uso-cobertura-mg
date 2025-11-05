@@ -23,9 +23,10 @@ warnings.filterwarnings("ignore")
 
 
 class SegmentationModel:
-    def __init__(self, model_type, image_dir, mask_dir, num_classes=16, batch_size=16, num_epochs=160, patience=100,
+    def __init__(self, model_type, encoder, image_dir, mask_dir, num_classes=16, batch_size=16, num_epochs=160, patience=100,
                  learning_rate=6e-5, output_dir="./output", img_size=128, num_channels=12, device=None, save_steps=500):
         self.model_type = model_type.lower()
+        self.encoder = encoder.lower()
         self.image_dir = image_dir
         self.mask_dir = mask_dir
         self.num_classes = num_classes
@@ -40,10 +41,10 @@ class SegmentationModel:
         self.data_augmentation = False
         self.model = None
         self.feature_extractor = None
-        self.num_channels = 12
+        self.num_channels = num_channels
 
 
-    def create_model(self, model_name="nvidia/mit-b1"):
+    def create_model(self):
         if self.model_type == "deeplab":
             self.model = models.segmentation.deeplabv3_resnet50(weights=None)
             self.model.backbone.conv1 = nn.Conv2d(
@@ -64,7 +65,7 @@ class SegmentationModel:
                 size=self.img_size
             )
             self.model = SegformerForSemanticSegmentation.from_pretrained(
-                model_name,
+                self.encoder,
                 num_labels=self.num_classes,
                 ignore_mismatched_sizes=True,
                 reshape_last_stage=True
@@ -73,7 +74,7 @@ class SegmentationModel:
 
         elif self.model_type == "unet":
             self.model = smp.Unet(
-                encoder_name=model_name,        # backbone (há muitos outros)
+                encoder_name=self.encoder,        # backbone (há muitos outros)
                 encoder_weights=None,           
                 in_channels=self.num_channels,  
                 classes=self.num_classes        
@@ -124,7 +125,7 @@ class SegmentationModel:
             model_path = os.path.join(latest_dir, "best_model.pth")
             if os.path.exists(model_path):
                 print(f"🔁 Carregando pesos Unet de {model_path}")
-                self.create_model(model_name="mit_b0")
+                self.create_model()
                 state_dict = torch.load(model_path, map_location=self.device)
                 self.model.load_state_dict(state_dict, strict=False)
                 print("✅ Pesos Unet carregados com sucesso!")
@@ -412,7 +413,7 @@ def segformer(use_weights=False, **kwargs):
     if use_weights:
         model.load_latest_weights()
     else:
-        model.create_model(model_name="nvidia/mit-b1")
+        model.create_model()
     return model
 
 

@@ -1,10 +1,11 @@
 model_type: "unet"            # "deeplab" ou "segformer" ou "unet"
+encoder: "mit_b0"
 image_dir: "dataset/Augmented/Images"
 mask_dir: "dataset/Augmented/Masks"
 
 num_classes: 16
-batch_size: 8
-num_epochs: 100
+batch_size: 2
+num_epochs: 1
 learning_rate: 0.0001
 img_size: 128
 
